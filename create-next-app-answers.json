@@ -1,0 +1,11 @@
+{
+  "name": "frontend",
+  "directory": ".",
+  "typescript": true,
+  "tailwind": true,
+  "eslint": true,
+  "app": true,
+  "srcDir": true,
+  "importAlias": "@/*",
+  "turbo": false
+}
