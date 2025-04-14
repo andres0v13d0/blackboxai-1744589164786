@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm 
+    focus:border-rose-500 focus:outline-none focus:ring-rose-500;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-error {
+    @apply bg-red-100 text-red-800;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-rose-600 to-pink-600;
+  }
+
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-rose-500 to-pink-500;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-rose-200 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-rose-300;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+  @apply relative px-4 py-2 rounded-lg max-w-[80%];
+}
+
+.chat-bubble-user {
+  @apply bg-rose-500 text-white ml-auto;
+}
+
+.chat-bubble-user:after {
+  content: '';
+  @apply absolute bottom-0 right-[-8px] border-8 border-transparent border-b-rose-500;
+}
+
+.chat-bubble-ai {
+  @apply bg-gray-100 text-gray-900;
+}
+
+.chat-bubble-ai:after {
+  content: '';
+  @apply absolute bottom-0 left-[-8px] border-8 border-transparent border-b-gray-100;
+}
+
+/* Form Styles */
+.form-group {
+  @apply mb-6;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-input {
+  @apply block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm
+  focus:border-rose-500 focus:outline-none focus:ring-rose-500;
+}
+
+.form-error {
+  @apply mt-1 text-sm text-red-600;
+}
+
+/* Button Loading State */
+.btn-loading {
+  @apply relative !text-transparent;
+}
+
+.btn-loading:after {
+  content: '';
+  @apply absolute inset-0 m-auto w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin;
+}
