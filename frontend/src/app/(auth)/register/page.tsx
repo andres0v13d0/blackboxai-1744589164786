@@ -6,8 +6,6 @@ import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 
-
-
 export default function Register() {
   const frontendUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
   const router = useRouter();
@@ -38,8 +36,12 @@ export default function Register() {
       }
 
       router.push('/login');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ocurrió un error desconocido');
+      }
     } finally {
       setLoading(false);
     }
