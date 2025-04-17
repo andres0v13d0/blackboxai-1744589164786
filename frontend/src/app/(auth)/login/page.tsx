@@ -12,7 +12,7 @@ export default function Login() {
 
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const frontendUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+  const frontendUrl = process.env.NEXT_FRONTEND_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

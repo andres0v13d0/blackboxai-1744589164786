@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 
 export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
-  const frontendUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+  const frontendUrl = process.env.NEXT_FRONTEND_URL;
   const { data: session } = useSession();
   const accessToken = session?.accessToken;
   

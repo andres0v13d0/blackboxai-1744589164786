@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 
 export default function Register() {
-  const frontendUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+  const frontendUrl = process.env.NEXT_FRONTEND_URL;
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
