@@ -1,8 +1,42 @@
+'use client';
 import { Navbar } from '@/components/navigation/Navbar';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+
+import { useState } from 'react';
+
 
 export default function Login() {
+
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+      callbackUrl: '/',
+    });
+
+    console.log("Respuesta de signIn:", res);
+
+    if (res?.ok) {
+      router.push(res.url || '/');
+    } else {
+      
+      setError('Correo o contraseña incorrectos');
+      console.error("Login error:", res?.error);
+    }
+  };
+  
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
@@ -22,7 +56,7 @@ export default function Login() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Correo electrónico
@@ -54,6 +88,8 @@ export default function Login() {
                   />
                 </div>
               </div>
+
+              {error && <p className="text-sm text-red-600">{error}</p>}
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -93,11 +129,19 @@ export default function Login() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <button className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <button
+                  onClick={() => signIn('google', {
+                    callbackUrl: 'http://localhost:3001',
+                  })}
+                  className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-google text-lg" />
                   Google
                 </button>
-                <button className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <button
+                  onClick={() => signIn('facebook',{
+                    callbackUrl: 'http://localhost:3001',
+                  })}
+                  className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-facebook text-lg" />
                   Facebook
                 </button>

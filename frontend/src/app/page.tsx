@@ -10,7 +10,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-lora font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal text-gray-900 mb-6 font-poetsen not-italic">
             Tu Guía Personal para una
             <span className="text-rose-600"> Relación más Fuerte</span>
           </h1>

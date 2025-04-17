@@ -1,41 +1,25 @@
-import type { Metadata } from "next";
-import { Poppins, Lora } from "next/font/google";
-import "./globals.css";
+import './globals.css';
+import { Providers } from './providers';
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
+export const metadata = {
+  title: 'CorazónAI',
+  description: 'CorazónAI es una plataforma de inteligencia artificial que ayuda a las personas a encontrar el amor verdadero.',
 
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-export const metadata: Metadata = {
-  title: "Guía de Relaciones | Tu Compañero Emocional",
-  description: "Encuentra orientación y apoyo para tu relación a través de nuestro asistente AI empático y comprensivo.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es-CO">
       <head>
-        <link 
-          rel="stylesheet" 
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='' />
+        <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${poppins.className} min-h-screen bg-white text-gray-900 antialiased`}>
-        <main className={lora.className}>
+      <body className='font-ubuntu'>
+        <Providers>
           {children}
-        </main>
+        </Providers>
       </body>
     </html>
   );
