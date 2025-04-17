@@ -12,6 +12,7 @@ export default function Login() {
 
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const frontendUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -131,7 +132,7 @@ export default function Login() {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   onClick={() => signIn('google', {
-                    callbackUrl: 'http://localhost:3001',
+                    callbackUrl: frontendUrl,
                   })}
                   className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-google text-lg" />
@@ -139,7 +140,7 @@ export default function Login() {
                 </button>
                 <button
                   onClick={() => signIn('facebook',{
-                    callbackUrl: 'http://localhost:3001',
+                    callbackUrl: frontendUrl,
                   })}
                   className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-facebook text-lg" />
