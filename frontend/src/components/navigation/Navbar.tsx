@@ -37,7 +37,7 @@ export function Navbar() {
     };
 
     fetchUser();
-  }, []);
+  }, [backendUrl]);
 
   const handleLogout = async () => {
     await fetch(`${backendUrl}/api/auth/logout`, {
