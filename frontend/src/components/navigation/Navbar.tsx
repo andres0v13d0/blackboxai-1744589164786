@@ -4,8 +4,15 @@ import { Button } from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
 import { FaUser, FaSignOutAlt, FaCrown, FaBars, FaTimes } from 'react-icons/fa';
 
+type User = {
+  id: string;
+  name?: string;
+  email?: string;
+  image?: string;
+};
+
 export function Navbar() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';

@@ -5,11 +5,18 @@ import { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import axios from 'axios';
 
+type User = {
+  id: string;
+  name?: string;
+  email?: string;
+  image?: string;
+};
+
 
 export default function Chat() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState([
@@ -60,7 +67,7 @@ export default function Chat() {
       setChat((prev) => [...prev, { from: 'ai', text: 'Escribiendo...' }]);
   
       const res = await axios.post(
-        'http://localhost:5000/api/chat',
+        `${backendUrl}/api/chat`,
         {
           message: userMessage,
           emotionalState,
