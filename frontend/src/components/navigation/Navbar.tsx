@@ -1,18 +1,49 @@
 'use client';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaUser, FaSignOutAlt, FaCrown, FaBars, FaTimes } from 'react-icons/fa';
 
 export function Navbar() {
-  const { data: session } = useSession();
+  const [user, setUser] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${backendUrl}/api/auth/me`, {
+          credentials: 'include',
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error('Error al obtener usuario:', err);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch(`${backendUrl}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    setUser(null);
+    window.location.href = '/login';
+  };
 
   const getShortName = () => {
-    if (!session?.user?.name) return '';
-    const firstName = session.user.name.split(' ')[0];
+    if (!user?.name) return '';
+    const firstName = user.name.split(' ')[0];
     return firstName.length > 10 ? `${firstName.slice(0, 10)}...` : firstName;
   };
 
@@ -55,7 +86,7 @@ export function Navbar() {
 
             {/* Usuario o login */}
             <div className="relative flex items-center space-x-4">
-              {session ? (
+              {user ? (
                 <div className="relative">
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
@@ -73,7 +104,7 @@ export function Navbar() {
                         <FaCrown className="mr-2" /> Actualizar Plan
                       </Link>
                       <button
-                        onClick={() => signOut()}
+                        onClick={handleLogout}
                         className="flex w-full items-center px-4 py-2 text-sm text-left hover:bg-gray-100"
                       >
                         <FaSignOutAlt className="mr-2" /> Cerrar sesión

@@ -4,16 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useSession } from "next-auth/react";
 
 
 export default function Chat() {
-  const messagesEndRef = useRef<HTMLDivElement | null>(null)
-  const frontendUrl = process.env.NEXT_FRONTEND_URL;
-  const { data: session } = useSession();
-  const accessToken = session?.accessToken;
-  
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState([
     {
       from: 'ai',
@@ -21,45 +19,81 @@ export default function Chat() {
     },
   ]);
   const [emotionalState, setEmotionalState] = useState('neutral');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${backendUrl}/api/auth/me`, {
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error('Error al obtener usuario:', err);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const handleSend = async () => {
     if (!message.trim()) return;
-
+  
     const userMessage = message.trim();
     setChat((prev) => [...prev, { from: 'user', text: userMessage }]);
     setMessage('');
-
-    if (!session) {
-      console.error("No hay sesión activa");
-      setChat((prev) => [...prev, { from: 'ai', text: 'No estás autenticado. Por favor, inicia sesión.' }]);
+    setLoading(true);
+  
+    if (!user) {
+      console.error('No estás autenticado');
+      setChat((prev) => [...prev, { from: 'ai', text: 'No estás autenticado. Inicia sesión.' }]);
+      setLoading(false);
       return;
     }
+  
     try {
-      const res = await axios.post(`${frontendUrl}/api/auth/register`, {
-        message: userMessage,
-        emotionalState,
-        userId: session.user.id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      setChat((prev) => [...prev, { from: 'ai', text: 'Escribiendo...' }]);
+  
+      const res = await axios.post(
+        'http://localhost:5000/api/chat',
+        {
+          message: userMessage,
+          emotionalState,
+          userId: user.id,
         },
-        withCredentials: true,
-      }
-    );
+        {
+          withCredentials: true,
+        }
+      );
   
       const aiResponse = res.data.response;
   
-      setChat((prev) => [...prev, { from: 'ai', text: aiResponse }]);
+      setChat((prev) => {
+        const newChat = [...prev];
+        newChat.pop()
+        return [...newChat, { from: 'ai', text: aiResponse }];
+      });
     } catch (err) {
-      console.error(err);
-      setChat((prev) => [...prev, { from: 'ai', text: 'Hubo un error. Intenta de nuevo.' }]);
+      console.error('Error al enviar mensaje:', err);
+      setChat((prev) => {
+        const newChat = [...prev];
+        newChat.pop();
+        return [...newChat, { from: 'ai', text: 'Hubo un error. Intenta de nuevo.' }];
+      });
+    } finally {
+      setLoading(false); 
     }
   };
+  
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat]);
-  
-
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
@@ -157,7 +191,7 @@ export default function Chat() {
                         msg.from === 'user' ? 'bg-rose-200 self-end' : 'bg-gray-100'
                       }`}
                     >
-                                            <p>{msg.text}</p>
+                      <p>{msg.text}</p>
                     </div>
                   </div>
                 ))}
@@ -177,7 +211,9 @@ export default function Chat() {
                       if (e.key === 'Enter') handleSend();
                     }}
                   />
-                  <Button onClick={handleSend}>Enviar</Button>
+                  <Button onClick={handleSend} disabled={loading}>
+                    {loading ? 'Enviando...' : 'Enviar'}
+                  </Button>
                 </div>
               </div>
             </div>

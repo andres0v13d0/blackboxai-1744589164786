@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/navigation/Navbar';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
 
 export default function Register() {
-  const frontendUrl = process.env.NEXT_FRONTEND_URL;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,7 @@ export default function Register() {
     const password = formData.get('password') as string;
 
     try {
-      const res = await fetch(`${frontendUrl}/api/auth/register`, {
+      const res = await fetch(`${backendUrl}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
@@ -188,18 +187,15 @@ export default function Register() {
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => signIn('google', {
-                    callbackUrl: frontendUrl,
-                  })}
+                    onClick={() => window.location.href = `${backendUrl}/api/auth/google`}
+
                   className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-google text-lg" />
                   Google
                 </button>
                 <button 
-                  onClick={() => signIn('facebook',{
-                    callbackUrl: frontendUrl,
-                  })}
-                  className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    onClick={() => window.location.href = `${backendUrl}/api/auth/facebook`}
+                    className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-facebook text-lg" />
                   Facebook
                 </button>

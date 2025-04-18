@@ -2,17 +2,14 @@
 import { Navbar } from '@/components/navigation/Navbar';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-
 import { useState } from 'react';
 
 
 export default function Login() {
-
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const frontendUrl = process.env.NEXT_FRONTEND_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,22 +17,30 @@ export default function Login() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const res = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-      callbackUrl: '/',
-    });
+    try {
+      const res = await fetch(`${backendUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
 
-    console.log("Respuesta de signIn:", res);
+      const data = await res.json();
 
-    if (res?.ok) {
-      router.push(res.url || '/');
-    } else {
-      
-      setError('Correo o contraseña incorrectos');
-      console.error("Login error:", res?.error);
+      if (res.ok) {
+        console.log('Usuario autenticado:', data.user);
+        router.push('/chat'); // o a donde quieras redirigir
+      } else {
+        setError(data.message || 'Correo o contraseña incorrectos');
+      }
+    } catch (err) {
+      console.error('Error en login:', err);
+      setError('Error al conectar con el servidor');
     }
+  };
+
+  const handleOAuthLogin = (provider: 'google' | 'facebook') => {
+    window.location.href = `${backendUrl}/api/auth/${provider}`;
   };
   
   return (
@@ -131,17 +136,13 @@ export default function Login() {
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => signIn('google', {
-                    callbackUrl: frontendUrl,
-                  })}
+                  onClick={() => handleOAuthLogin('google')}
                   className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-google text-lg" />
                   Google
                 </button>
                 <button
-                  onClick={() => signIn('facebook',{
-                    callbackUrl: frontendUrl,
-                  })}
+                  onClick={() => handleOAuthLogin('facebook')}
                   className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
                   <i className="fab fa-facebook text-lg" />
                   Facebook
